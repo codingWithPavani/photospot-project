@@ -1,0 +1,791 @@
+{% extends 'main/base.html' %}
+{% block content %}
+
+<h2 class="mb-3">Explore Locations</h2>
+
+<form method="GET" class="mb-4">
+    <div class="input-group">
+        <input type="text" name="q" class="form-control"
+               placeholder="Search locations or posts..." value="{{ query }}">
+        <button class="btn btn-dark">Search</button>
+    </div>
+</form>
+
+<!-- =================== MODERN POPUP =================== -->
+<style>
+    /* Global enhancements */
+    .comment-username {
+        cursor: pointer;
+        color: #000;
+        font-weight: 600;
+        transition: all 0.2s ease;
+    }
+
+    .comment-username:hover {
+        text-decoration: underline;
+        color: #007bff;
+    }
+
+    /* Modern Popup */
+    #postPopup {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.92);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 7000;
+        padding: 20px;
+        backdrop-filter: blur(8px);
+    }
+
+    #closePostPopup {
+        position: absolute;
+        top: 25px;
+        right: 35px;
+        font-size: 42px;
+        color: rgba(255, 255, 255, 0.9);
+        cursor: pointer;
+        z-index: 8000;
+        transition: transform 0.3s ease, color 0.3s ease;
+        background: rgba(0, 0, 0, 0.5);
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+    }
+
+    #closePostPopup:hover {
+        transform: rotate(90deg);
+        color: #fff;
+        background: rgba(0, 0, 0, 0.7);
+    }
+
+    .popup-box {
+        width: 90%;
+        max-width: 1200px;
+        height: 85vh;
+        background: #fff;
+        border-radius: 20px;
+        display: flex;
+        overflow: hidden;
+        animation: fadeInScale 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        position: relative;
+    }
+
+    .popup-left {
+        flex: 2;
+        background: #0a0a0a;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        position: relative;
+    }
+
+    .popup-left::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    }
+
+    .popup-left img,
+    .popup-left video {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        border-radius: 8px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .popup-right {
+        flex: 1.2;
+        background: #fff;
+        padding: 25px;
+        display: flex;
+        flex-direction: column;
+        border-left: 1px solid #f0f0f0;
+    }
+
+    .popup-right h5 {
+        font-weight: 700;
+        color: #222;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #f0f0f0;
+        font-size: 1.4rem;
+    }
+
+    #popupComments {
+        flex: 1;
+        overflow-y: auto;
+        padding-right: 15px;
+        margin-right: -10px;
+    }
+
+    /* Custom scrollbar for comments */
+    #popupComments::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    #popupComments::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+
+    #popupComments::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 10px;
+    }
+
+    #popupComments::-webkit-scrollbar-thumb:hover {
+        background: #a1a1a1;
+    }
+
+    .comment-item {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 16px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid #f5f5f5;
+        align-items: flex-start;
+        transition: background-color 0.2s ease;
+        padding: 12px;
+        border-radius: 10px;
+    }
+
+    .comment-item:hover {
+        background-color: #f9f9f9;
+    }
+
+    .comment-profile-pic {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #fff;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        flex-shrink: 0;
+    }
+
+    .comment-text {
+        font-size: 14px;
+        color: #555;
+        line-height: 1.5;
+        margin-top: 4px;
+    }
+
+    .popup-add-comment {
+        display: flex;
+        gap: 12px;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 2px solid #f0f0f0;
+    }
+
+    .popup-add-comment input {
+        flex: 1;
+        border-radius: 25px;
+        height: 46px;
+        padding: 0 20px;
+        border: 2px solid #e0e0e0;
+        transition: all 0.3s ease;
+        font-size: 14px;
+    }
+
+    .popup-add-comment input:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        outline: none;
+    }
+
+    .popup-add-comment button {
+        border-radius: 25px;
+        padding: 0 25px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+    }
+
+    .popup-add-comment button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    @keyframes fadeInScale {
+        from {
+            opacity: 0;
+            transform: scale(0.9) translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+    }
+
+    /* Card hover effects */
+    .popup-trigger {
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        cursor: pointer;
+        overflow: hidden;
+    }
+
+    .popup-trigger:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Trending & Latest Posts Headers */
+    h4 {
+        font-weight: 700;
+        color: #333;
+        margin: 30px 0 20px;
+        padding-bottom: 10px;
+        position: relative;
+    }
+
+    h4::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        border-radius: 2px;
+    }
+
+    /* Card enhancements */
+    .card {
+        border: none;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .card:hover {
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+    }
+
+    .card-img-top {
+        height: 240px;
+        object-fit: cover;
+        width: 100%;
+        transition: transform 0.5s ease;
+    }
+
+    .card:hover .card-img-top {
+        transform: scale(1.05);
+    }
+
+    .card-body {
+        padding: 20px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .card-body h5 {
+        font-weight: 700;
+        color: #222;
+        margin-bottom: 15px;
+        font-size: 1.2rem;
+        line-height: 1.4;
+    }
+
+    .card-body p.text-muted {
+        font-size: 13px;
+        color: #777 !important;
+        margin-top: auto;
+        padding-top: 15px;
+        border-top: 1px solid #f0f0f0;
+    }
+
+    /* Button enhancements */
+    .btn-outline-danger {
+        border: 2px solid;
+        border-radius: 25px;
+        padding: 6px 15px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-outline-danger:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+    }
+
+    .btn-danger {
+        border-radius: 25px;
+        padding: 6px 15px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+        border: none;
+    }
+
+    .btn-danger:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(238, 90, 82, 0.4);
+    }
+
+    .btn-outline-dark {
+        border: 2px solid;
+        border-radius: 25px;
+        padding: 6px 15px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-outline-dark:hover {
+        transform: translateY(-2px);
+        background-color: #343a40;
+        color: white;
+        box-shadow: 0 5px 15px rgba(52, 58, 64, 0.3);
+    }
+
+    /* Row and column spacing */
+    .row {
+        margin-left: -8px;
+        margin-right: -8px;
+    }
+
+    .col-md-4 {
+        padding-left: 8px;
+        padding-right: 8px;
+        margin-bottom: 16px;
+    }
+
+    /* Search bar enhancements */
+    .input-group {
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        border-radius: 50px;
+        overflow: hidden;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .input-group .form-control {
+        border: none;
+        padding: 15px 25px;
+        font-size: 16px;
+        border-radius: 50px 0 0 50px;
+    }
+
+    .input-group .form-control:focus {
+        box-shadow: none;
+        border-color: #007bff;
+    }
+
+    .input-group .btn-dark {
+        border-radius: 0 50px 50px 0;
+        padding: 15px 30px;
+        background: linear-gradient(135deg, #434343 0%, #000000 100%);
+        border: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .input-group .btn-dark:hover {
+        background: linear-gradient(135deg, #000000 0%, #434343 100%);
+        transform: translateX(-2px);
+    }
+
+    /* Empty state styling */
+    .row p:empty {
+        text-align: center;
+        padding: 40px;
+        color: #999;
+        font-style: italic;
+        background: #f9f9f9;
+        border-radius: 12px;
+        margin: 20px 0;
+    }
+
+    /* Animation for cards */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .col-md-4 {
+        animation: fadeInUp 0.6s ease forwards;
+        opacity: 0;
+    }
+
+    .col-md-4:nth-child(1) { animation-delay: 0.1s; }
+    .col-md-4:nth-child(2) { animation-delay: 0.2s; }
+    .col-md-4:nth-child(3) { animation-delay: 0.3s; }
+    .col-md-4:nth-child(4) { animation-delay: 0.4s; }
+    .col-md-4:nth-child(5) { animation-delay: 0.5s; }
+    .col-md-4:nth-child(6) { animation-delay: 0.6s; }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .popup-box {
+            flex-direction: column;
+            height: 90vh;
+            width: 95%;
+        }
+        
+        .popup-left {
+            flex: 1.2;
+            min-height: 40%;
+        }
+        
+        .popup-right {
+            flex: 1;
+        }
+        
+        .card-img-top {
+            height: 200px;
+        }
+        
+        .input-group {
+            border-radius: 12px;
+        }
+        
+        .input-group .form-control {
+            border-radius: 12px 0 0 12px;
+        }
+        
+        .input-group .btn-dark {
+            border-radius: 0 12px 12px 0;
+        }
+    }
+
+    /* Loading state for buttons */
+    .btn.loading {
+        position: relative;
+        color: transparent !important;
+    }
+
+    .btn.loading::after {
+        content: '';
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        top: 50%;
+        left: 50%;
+        margin-top: -8px;
+        margin-left: -8px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+</style>
+
+<!-- Popup HTML -->
+<div id="postPopup">
+    <span id="closePostPopup">&times;</span>
+    <div class="popup-box">
+        <div class="popup-left" id="popupMedia"></div>
+        <div class="popup-right">
+            <h5 class="mb-3">Comments</h5>
+            <div id="popupComments"></div>
+            <div class="popup-add-comment">
+                <input type="text" id="commentInput" class="form-control" placeholder="Add a comment...">
+                <button id="sendComment" class="btn btn-dark">Post</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ================= TRENDING ================== -->
+<h4 class="mt-3">🔥 Trending</h4>
+<div class="row">
+    {% for t in trending %}
+    <div class="col-md-4">
+        <div class="card mb-3">
+            {% if t.image %}
+                <img src="{{ t.image.url }}" class="card-img-top popup-trigger"
+                     data-id="{{ t.id }}" data-type="image" data-src="{{ t.image.url }}">
+            {% elif t.video and t.video.name %}
+                <video class="card-img-top popup-trigger" muted
+                       data-id="{{ t.id }}" data-type="video" data-src="{{ t.video.url }}">
+                    <source src="{{ t.video.url }}">
+                </video>
+            {% endif %}
+
+            <div class="card-body">
+                <h5>{{ t.title }}</h5>
+                <div class="d-flex justify-content-between">
+                    <button class="btn btn-sm btn-outline-danger like-btn" data-id="{{ t.id }}">
+                        ❤️ Like ({{ t.like_count }})
+                    </button>
+
+
+                    <button class="btn btn-sm btn-outline-dark popup-trigger"
+                            data-id="{{ t.id }}"
+                            data-type="{% if t.image %}image{% elif t.video and t.video.name %}video{% else %}none{% endif %}"
+                            data-src="{% if t.image %}{{ t.image.url }}{% elif t.video and t.video.name %}{{ t.video.url }}{% else %}#{% endif %}">
+                        💬 Comments ({{ t.comment_count }})
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+        <p>No trending posts.</p>
+    {% endfor %}
+</div>
+
+<!-- ================= LATEST POSTS ================= -->
+<h4 class="mt-4">📸 Latest Posts</h4>
+<div class="row">
+    {% for p in posts %}
+    <div class="col-md-4">
+        <div class="card mb-4">
+            {% if p.image %}
+                <img src="{{ p.image.url }}" class="card-img-top popup-trigger"
+                     data-id="{{ p.id }}" data-type="image" data-src="{{ p.image.url }}">
+            {% elif p.video and p.video.name %}
+                <video class="card-img-top popup-trigger" muted
+                       data-id="{{ p.id }}" data-type="video" data-src="{{ p.video.url }}">
+                    <source src="{{ t.video.url }}">
+                </video>
+            {% endif %}
+
+            <div class="card-body">
+                <h5>{{ p.title }}</h5>
+                <div class="d-flex justify-content-between">
+                    <button class="btn btn-sm btn-outline-danger like-btn" data-id="{{ p.id }}">
+                        ❤️ Like ({{ p.like_count }})
+                    </button>
+                    <button class="btn btn-sm btn-outline-dark popup-trigger"
+                            data-id="{{ p.id }}"
+                            data-type="{% if p.image %}image{% elif p.video and p.video.name %}video{% else %}none{% endif %}"
+                            data-src="{% if p.image %}{{ p.image.url }}{% elif p.video and p.video.name %}{{ p.video.url }}{% else %}#{% endif %}">
+                        💬 Comments ({{ p.comment_count }})
+                    </button>
+                </div>
+                <p class="text-muted mt-2">
+                    By {{ p.uploader.username }} <br>
+                    {{ p.location.name }}
+                </p>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+        <p>No posts.</p>
+    {% endfor %}
+</div>
+
+<!-- ================= POPUP SCRIPT ================= -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    // ------------------ CSRF ------------------
+    function getCSRFToken() {
+        let cookieValue = null;
+        document.cookie.split(";").forEach(cookie => {
+            cookie = cookie.trim();
+            if (cookie.startsWith("csrftoken=")) {
+                cookieValue = cookie.substring("csrftoken=".length);
+            }
+        });
+        return cookieValue;
+    }
+
+    // ------------------ POPUP ------------------
+    let activePostId = null;
+    const postPopup = document.getElementById("postPopup");
+    const popupMedia = document.getElementById("popupMedia");
+    const popupComments = document.getElementById("popupComments");
+    const commentInput = document.getElementById("commentInput");
+    const sendCommentBtn = document.getElementById("sendComment");
+    const closePopupBtn = document.getElementById("closePostPopup");
+
+    document.querySelectorAll(".popup-trigger").forEach(item => {
+        item.addEventListener("click", function () {
+            activePostId = this.dataset.id;
+            const src = this.dataset.src;
+            const type = this.dataset.type;
+
+            postPopup.style.display = "flex";
+            popupMedia.innerHTML = "";
+
+            if (type === "image") {
+                popupMedia.innerHTML = `<img src="${src}" class="img-fluid">`;
+            } else if (type === "video") {
+                popupMedia.innerHTML = `<video src="${src}" controls autoplay class="img-fluid"></video>`;
+            }
+
+            loadComments(activePostId);
+        });
+    });
+
+    closePopupBtn.onclick = () => postPopup.style.display = "none";
+    postPopup.onclick = (e) => {
+        if (e.target.id === "postPopup") postPopup.style.display = "none";
+    };
+
+    // ------------------ LOAD COMMENTS ------------------
+    function loadComments(postId) {
+        fetch(`/get-comments/${postId}/`)
+            .then(res => res.json())
+            .then(data => {
+                popupComments.innerHTML = "";
+                if (data.comments.length === 0) {
+                    popupComments.innerHTML = `<p class="text-muted">No comments yet.</p>`;
+                    return;
+                }
+                data.comments.forEach(c => {
+                    const profileImg = c.profile_pic_url 
+                        ? `<img src="${c.profile_pic_url}" class="comment-profile-pic">`
+                        : `<img src="/static/default_profile.png" class="comment-profile-pic">`;
+                    popupComments.innerHTML += `
+                        <div class="comment-item">
+                            ${profileImg}
+                            <div>
+                            
+                                <strong class="comment-username" data-username="${c.user}">
+    ${c.user}
+</strong>
+
+                                <div class="comment-text">${c.text}</div>
+                            </div>
+                        </div>`;
+                });
+            });
+    }
+
+
+    // Handle username click → open profile page
+document.addEventListener("click", function (e) {
+    if (e.target.classList.contains("comment-username")) {
+        const username = e.target.dataset.username;
+        window.location.href = `/profile/${username}/`;
+    }
+});
+
+    // ------------------ POST COMMENT ------------------
+    sendCommentBtn.addEventListener("click", postComment);
+    commentInput.addEventListener("keypress", function(e) {
+        if (e.key === "Enter") postComment();
+    });
+
+    function postComment() {
+        const text = commentInput.value.trim();
+        if (!text || !activePostId) return;
+
+        // Add loading state
+        sendCommentBtn.classList.add('loading');
+        sendCommentBtn.disabled = true;
+
+        fetch("{% url 'add_comment' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCSRFToken(),
+            },
+            body: JSON.stringify({
+                post_id: activePostId,
+                comment: text
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            // Remove loading state
+            sendCommentBtn.classList.remove('loading');
+            sendCommentBtn.disabled = false;
+
+            if (data.error) {
+                alert("Failed to post comment: " + data.error);
+                return;
+            }
+
+            commentInput.value = "";
+            loadComments(activePostId);
+
+            // UPDATE COMMENT COUNT IN UI
+            const commentButtons = document.querySelectorAll(`button[data-id="${activePostId}"]`);
+            commentButtons.forEach(btn => {
+                if (btn.innerHTML.includes("Comments")) {
+                    btn.innerHTML = `💬 Comments (${data.comment_count})`;
+                }
+            });
+        })
+        .catch(err => {
+            console.error("Post comment fetch error:", err);
+            sendCommentBtn.classList.remove('loading');
+            sendCommentBtn.disabled = false;
+            alert("Something went wrong. Please try again.");
+        });
+    }
+
+    // ------------------ LIKE BUTTON ------------------
+    document.querySelectorAll(".like-btn").forEach(btn => {
+        btn.addEventListener("click", function () {
+            const postId = this.dataset.id;
+            const button = this;
+
+            // Add loading state
+            button.classList.add('loading');
+            button.disabled = true;
+
+            const formData = new FormData();
+            formData.append("post_id", postId);
+
+            fetch("{% url 'like_post' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": getCSRFToken()
+                },
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                // Remove loading state
+                button.classList.remove('loading');
+                button.disabled = false;
+
+                button.innerHTML = `❤️ Like (${data.count})`;
+                if (data.liked) {
+                    button.classList.remove("btn-outline-danger");
+                    button.classList.add("btn-danger");
+                } else {
+                    button.classList.add("btn-outline-danger");
+                    button.classList.remove("btn-danger");
+                }
+            })
+            .catch(err => {
+                console.error("Like error:", err);
+                button.classList.remove('loading');
+                button.disabled = false;
+            });
+        });
+    });
+
+});
+</script>
+
+
+{% endblock %}

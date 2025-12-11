@@ -1,0 +1,309 @@
+{% extends 'main/base.html' %}
+{% block content %}
+
+<style>
+/* ====== PAGE CONTAINER ====== */
+.upload-page {
+    min-height: 90vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #f0f4ff, #e2e8f0);
+    font-family: 'Inter', sans-serif;
+    padding: 2rem 1rem;
+}
+
+/* ====== CARD STYLING ====== */
+.upload-card {
+    width: 100%;
+    max-width: 700px;
+    background: #fff;
+    border-radius: 24px;
+    padding: 3rem 2.5rem;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.upload-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.12);
+}
+
+/* ====== HEADER ====== */
+.upload-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.upload-header h2 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+}
+
+.upload-header p {
+    color: #64748b;
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+/* ====== FORM STYLING ====== */
+.upload-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Style the default Django form paragraphs */
+.upload-form p {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.upload-form label {
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.upload-form input[type="text"],
+.upload-form textarea,
+.upload-form select,
+.upload-form input[type="file"] {
+    width: 100%;
+    padding: 0.85rem 1.2rem;
+    border-radius: 12px;
+    border: 2px solid #e2e8f0;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: #f8fafc;
+}
+
+.upload-form input:focus,
+.upload-form textarea:focus,
+.upload-form select:focus {
+    outline: none;
+    border-color: #667eea;
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+}
+
+.upload-form textarea {
+    min-height: 150px;
+    resize: vertical;
+    font-family: inherit;
+}
+
+/* ====== FILE INPUT STYLING ====== */
+.file-input-container {
+    position: relative;
+    overflow: hidden;
+    margin-top: 0.5rem;
+}
+
+.file-input-container input[type="file"] {
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.file-input-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.85rem 1.2rem;
+    border-radius: 12px;
+    border: 2px dashed #cbd5e1;
+    background: #f8fafc;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.file-input-label:hover {
+    border-color: #667eea;
+    background: #f0f4ff;
+}
+
+.file-input-label i {
+    font-size: 1.2rem;
+    color: #667eea;
+}
+
+/* ====== SUBMIT BUTTON ====== */
+.submit-container {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.submit-btn {
+    padding: 1rem 2.5rem;
+    border-radius: 14px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 30px rgba(102,126,234,0.25);
+}
+
+.submit-btn:active {
+    transform: translateY(0);
+}
+
+/* ====== ERROR MESSAGES ====== */
+.upload-form .errorlist {
+    color: #ef4444;
+    font-size: 0.85rem;
+    margin-top: 0.3rem;
+    padding: 0;
+    list-style: none;
+}
+
+.upload-form .errorlist li {
+    margin: 0.2rem 0;
+}
+
+/* ====== RESPONSIVE ====== */
+@media (max-width: 768px) {
+    .upload-card {
+        padding: 2rem 1.5rem;
+        max-width: 95%;
+    }
+    
+    .upload-header h2 {
+        font-size: 1.9rem;
+    }
+    
+    .upload-form {
+        gap: 1.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .upload-card {
+        padding: 1.5rem 1.2rem;
+        border-radius: 20px;
+    }
+    
+    .upload-header h2 {
+        font-size: 1.7rem;
+    }
+    
+    .upload-header p {
+        font-size: 1rem;
+    }
+    
+    .submit-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+</style>
+
+<div class="upload-page">
+    <div class="upload-card">
+        <div class="upload-header">
+            <h2>Share Your Creation</h2>
+            <p>Upload your post and inspire others</p>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data" class="upload-form">
+            {% csrf_token %}
+            
+            <!-- Render the form using Django's default as_p method -->
+            {{ form.as_p }}
+            
+            <!-- Submit Button -->
+            <div class="submit-container">
+                <button type="submit" class="submit-btn">
+                    <span>Publish Post</span>
+                    <i>🚀</i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// Add some interactivity
+document.addEventListener('DOMContentLoaded', function() {
+    // File input enhancement
+    const fileInput = document.querySelector('input[type="file"]');
+    const fileLabel = document.querySelector('label[for*="image"]');
+    
+    if (fileInput && fileLabel) {
+        // Create a custom file input container
+        const fileInputContainer = document.createElement('div');
+        fileInputContainer.className = 'file-input-container';
+        
+        // Create custom label
+        const customLabel = document.createElement('label');
+        customLabel.className = 'file-input-label';
+        customLabel.setAttribute('for', fileInput.id);
+        customLabel.innerHTML = '<i>📷</i><span class="file-input-text">Choose an image</span>';
+        
+        // Wrap the file input
+        fileInput.parentNode.insertBefore(fileInputContainer, fileInput);
+        fileInputContainer.appendChild(fileInput);
+        fileInputContainer.appendChild(customLabel);
+        
+        // Update label text when file is selected
+        fileInput.addEventListener('change', function(e) {
+            const fileInputText = customLabel.querySelector('.file-input-text');
+            if (this.files && this.files[0]) {
+                const fileName = this.files[0].name;
+                fileInputText.textContent = fileName.length > 20 
+                    ? fileName.substring(0, 20) + '...' 
+                    : fileName;
+            }
+        });
+    }
+    
+    // Style form paragraphs
+    const formParagraphs = document.querySelectorAll('.upload-form p');
+    formParagraphs.forEach(p => {
+        const label = p.querySelector('label');
+        const input = p.querySelector('input, textarea, select');
+        
+        if (label && input) {
+            // Add focus effects
+            input.addEventListener('focus', function() {
+                this.parentElement.classList.add('focused');
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.classList.remove('focused');
+                if (this.value.trim()) {
+                    this.parentElement.classList.add('has-value');
+                } else {
+                    this.parentElement.classList.remove('has-value');
+                }
+            });
+            
+            // Trigger blur on load to check initial values
+            input.dispatchEvent(new Event('blur'));
+        }
+    });
+});
+</script>
+
+{% endblock %}

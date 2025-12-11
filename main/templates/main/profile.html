@@ -1,0 +1,1337 @@
+{% extends 'main/base.html' %}
+{% block content %}
+
+<style>
+/* Enhanced Delete Button Styling */
+/* Make the 3-dot container relative */
+.popup-options {
+    position: relative;
+    display: inline-block;
+}
+
+/* Position the menu to the left side of the 3 dots */
+.popup-options-menu {
+    position: absolute;
+    top: 0;             /* Align vertically with the 3 dots */
+    left: 100%;         /* Place it to the right of the 3 dots */
+    transform: translateX(-100%); /* Shift left to align left edge with 3 dots */
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    z-index: 1000;
+    display: none;      /* Will be toggled by JS */
+    min-width: 150px;
+}
+
+/* Delete button inside menu */
+.popup-options-menu .delete-post-btn {
+    display: block;
+    width: 100%;
+    padding: 10px 16px;
+    text-align: left;
+    font-weight: 600;
+    color: #ff4d4d;
+    background: none;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.popup-options-menu .delete-post-btn:hover {
+    background: rgba(255, 77, 77, 0.1);
+    transform: translateX(2px);
+}
+.save{
+        display: block;
+    width: 100%;
+    padding: 10px 16px;
+    text-align: left;
+    font-weight: 600;
+    color: #0c0b0c;
+    background: none;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+    /* Enhanced CSS with better alignment */
+    .profile-page {
+        max-width: 935px;
+        margin: 0 auto;
+        /* padding: 20px 20px 40px; */
+        padding: 20px 1px 40px;
+    }
+    
+    .profile-layout {
+        display: flex;
+        gap: 120px;
+        margin-bottom: 44px;
+        padding-bottom: 44px;
+        border-bottom: 1px solid #dbdbdb;
+    }
+
+    .profile-left-column {
+        flex: 0 0 300px;
+        position: sticky;
+        top: 100px;
+        height: fit-content;
+    }
+
+    .profile-right-column {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .profile-image-container {
+        width: 200px;
+        /* height: 200px; */
+        height: auto;
+        margin: 0 auto 12px;
+        position: relative;
+    }
+    
+    .profile-image-wrapper {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 1px solid #dbdbdb;
+        padding: 4px;
+        background: linear-gradient(45deg, #405de6, #5851db, #833ab4, #c13584, #e1306c, #fd1d1d);
+        margin: 0 auto;
+        transition: transform 0.3s ease;
+    }
+    
+    .profile-image-wrapper:hover {
+        transform: scale(1.05);
+    }
+    
+    .profile-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 2px solid white;
+    }
+    
+    .profile-username {
+        font-size: 24px;
+        font-weight: 600;
+        color: #262626;
+        text-align: center;
+        margin: 0 0 8px 0;
+        letter-spacing: -0.2px;
+    }
+    
+    .profile-name {
+        font-size: 16px;
+        color: #8e8e8e;
+        text-align: center;
+        margin: 0 0 24px 0;
+        font-weight: 400;
+    }
+    
+    .profile-bio {
+        font-size: 14px;
+        color: #262626;
+        line-height: 1.6;
+        margin: 0 0 20px 0;
+        text-align: center;
+        padding: 0 15px;
+    }
+    
+    .profile-contact {
+        font-size: 14px;
+        color: #00376b;
+        text-align: center;
+        margin: 0 0 16px 0;
+        padding: 0 15px;
+    }
+    
+    .profile-contact a {
+        color: #00376b;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s ease;
+    }
+    
+    .profile-contact a:hover {
+        color: #0095f6;
+        text-decoration: underline;
+    }
+    
+    .profile-portfolio {
+        text-align: center;
+        margin-bottom: 20px;
+        padding: 0 15px;
+    }
+    
+    .portfolio-link {
+        font-size: 14px;
+        color: #0095f6;
+        text-decoration: none;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        transition: all 0.2s ease;
+    }
+    
+    .portfolio-link:hover {
+        color: #1877f2;
+        transform: translateY(-1px);
+    }
+    
+    .profile-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-top: 28px;
+        padding: 0 15px;
+    }
+    
+    .btn-action {
+        width: 100%;
+        padding: 10px 0;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        border: 1px solid #dbdbdb;
+        background: white;
+        color: #262626;
+        text-decoration: none;
+        text-align: center;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-action.primary {
+        background: linear-gradient(45deg, #0095f6, #1877f2);
+        color: white;
+        border: none;
+    }
+    
+    .btn-action:hover {
+        background: #fafafa;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    
+    .btn-action.primary:hover {
+        background: linear-gradient(45deg, #1877f2, #0095f6);
+        box-shadow: 0 4px 12px rgba(24, 119, 242, 0.2);
+    }
+    
+    .profile-stats {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 0 24px 0;
+        margin-bottom: 24px;
+        border-bottom: 1px solid #dbdbdb;
+    }
+    
+    .stat {
+        text-align: center;
+        cursor: pointer;
+        flex: 1;
+        padding: 0 10px;
+        transition: transform 0.2s ease;
+    }
+    
+    .stat:hover {
+        transform: translateY(-2px);
+    }
+    
+    .stat-number {
+        font-size: 20px;
+        font-weight: 700;
+        color: #262626;
+        display: block;
+        margin-bottom: 2px;
+    }
+    
+    .stat-label {
+        font-size: 14px;
+        color: #8e8e8e;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+    }
+    
+    .gallery-tabs {
+        display: flex;
+        justify-content: center;
+        border-top: 1px solid #dbdbdb;
+        margin-bottom: 0;
+    }
+    
+    .tab {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 18px 0;
+        margin: 0 40px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #8e8e8e;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-top: 2px solid transparent;
+        margin-top: -1px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        flex: 1;
+        max-width: 120px;
+    }
+    
+    .tab:hover {
+        color: #262626;
+    }
+    
+    .tab.active {
+        color: #262626;
+        border-top-color: #262626;
+    }
+    
+    .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+        margin-top: 32px;
+        padding: 0 0 40px;
+    }
+    .gallery-item {
+        position: relative;
+        aspect-ratio: 1;
+        overflow: hidden;
+        border-radius: 12px;
+        background: #f2f2f2;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    } 
+
+    .gallery-item:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+
+    /* .gallery-media {
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    } */
+
+    .gallery-media {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+
+
+  
+
+
+    .gallery-item:hover .gallery-media {
+        transform: scale(1.08);
+    }
+
+    .gallery-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+        padding: 16px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        gap: 24px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .gallery-item:hover .gallery-overlay {
+        opacity: 1;
+    }
+
+    .overlay-stat {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #fff;
+        font-weight: 600;
+        font-size: 14px;
+        background: rgba(255,255,255,0.15);
+        padding: 8px 16px;
+        border-radius: 24px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.2);
+        transition: transform 0.2s ease;
+    }
+
+    .overlay-stat:hover {
+        transform: scale(1.05);
+        background: rgba(255,255,255,0.2);
+    }
+
+    .empty-gallery {
+        text-align: center;
+        padding: 80px 20px;
+        background: white;
+        border-radius: 16px;
+        margin: 40px 0;
+    }
+    
+    .empty-icon {
+        font-size: 72px;
+        color: #dbdbdb;
+        margin-bottom: 24px;
+        opacity: 0.8;
+    }
+    
+    .empty-title {
+        font-size: 28px;
+        font-weight: 300;
+        color: #262626;
+        margin-bottom: 12px;
+        letter-spacing: -0.5px;
+    }
+    
+    .empty-text {
+        font-size: 15px;
+        color: #8e8e8e;
+        margin-bottom: 32px;
+        line-height: 1.6;
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    .btn-upload {
+        background: linear-gradient(45deg, #0095f6, #1877f2);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 32px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(24, 119, 242, 0.2);
+    }
+    
+    .btn-upload:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(24, 119, 242, 0.3);
+        color: white;
+    }
+    
+    .btn-booking {
+        background: linear-gradient(45deg, #dc2626, #ef4444);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 0;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+        margin-top: 12px;
+        transition: all 0.3s ease;
+        letter-spacing: 0.3px;
+        box-shadow: 0 2px 8px rgba(220, 38, 38, 0.2);
+    }
+    
+    .btn-booking:hover {
+        background: linear-gradient(45deg, #b91c1c, #dc2626);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+    }
+
+    /* Modal styling */
+    .modal-content {
+        border-radius: 16px;
+        border: none;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    }
+
+    .modal-header {
+        border-bottom: 1px solid #dbdbdb;
+        padding: 24px 32px;
+    }
+
+    .modal-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: #262626;
+    }
+
+    .modal-body {
+        padding: 32px;
+    }
+
+    @media (max-width: 768px) {
+        .profile-layout {
+            flex-direction: column;
+            gap: 40px;
+        }
+        
+        .profile-left-column {
+            position: static;
+            width: 100%;
+        }
+        
+        .gallery-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+        
+        .profile-stats {
+            gap: 20px;
+        }
+        
+        .tab {
+            margin: 0 20px;
+            padding: 16px 0;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .gallery-grid {
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+        
+        .profile-stats {
+            flex-direction: column;
+            gap: 16px;
+            align-items: flex-start;
+        }
+        
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            text-align: left;
+            padding: 8px 0;
+        }
+        
+        .gallery-tabs {
+            flex-wrap: wrap;
+        }
+        
+        .tab {
+            flex: 0 0 calc(33.333% - 20px);
+            margin: 0;
+            padding: 12px 0;
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        #postPopup {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(0,0,0,0.88);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 7000;
+        padding: 20px;
+    }
+
+    #closePostPopup {
+        position: absolute;
+        top: 15px; right: 25px;
+        font-size: 40px;
+        color: white;
+        cursor: pointer;
+        z-index: 8000;
+    }
+
+    .popup-box {
+        width: 90%;
+        max-width: 1100px;
+        height: 80vh;
+        background: #fff;
+        border-radius: 12px;
+        display: flex;
+        overflow: hidden;
+        animation: fadeIn .3s ease;
+    }
+
+    .popup-left {
+        flex: 2;
+        background: #000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .popup-left img,
+    .popup-left video {
+        
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+
+    .popup-right {
+        flex: 1.2;
+        background: #fff;
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        border-left: 1px solid #eee;
+    }
+
+    #popupComments {
+        flex: 1;
+        overflow-y: auto;
+        padding-right: 10px;
+    }
+
+    .comment-item {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 12px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #ececec;
+        align-items: flex-start;
+    }
+
+    .comment-profile-pic {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .comment-text {
+        font-size: 14px;
+        color: #555;
+    }
+
+    .popup-add-comment {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .popup-add-comment input {
+        flex: 1;
+        border-radius: 12px;
+        height: 42px;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.95); }
+        to   { opacity: 1; transform: scale(1); }
+    }
+
+    .popup-trigger:hover {
+        cursor: pointer;
+        transform: scale(1.03);
+        transition: .2s;
+    }
+</style>
+
+<!-- <div class="profile-page"> -->
+    <div class="profile-page" style="margin-left: -20px; padding-left: 0;"></div>
+    <div class="profile-layout">
+
+        <!-- LEFT COLUMN -->
+        <div class="profile-left-column">
+            <div class="profile-image-container">
+                <div class="profile-image-wrapper">
+                    {% if profile.profile_pic %}
+                        <img src="{{ profile.profile_pic.url }}" class="profile-image" alt="{{ owner.username }}'s profile picture">
+                    {% else %}
+                        <img src="/static/default_profile.jpg" class="profile-image" alt="Default profile picture">
+                    {% endif %}
+                </div>
+            </div>
+
+            <h1 class="profile-username">{{ owner.username }}</h1>
+            <!-- <p class="profile-name">{{ owner.get_full_name|default:"Photographer" }}</p> -->
+
+            {% if profile.bio %}
+            <p class="profile-bio">{{ profile.bio }}</p>
+            {% endif %}
+
+            {% if profile.contact %}
+            <div class="profile-contact">
+                <a href="tel:{{ profile.contact }}">
+                    <i class="bi bi-telephone"></i> {{ profile.contact }}
+                </a>
+            </div>
+            {% endif %}
+
+            {% if profile.portfolio_link %}
+            <div class="profile-portfolio">
+                <a href="{{ profile.portfolio_link }}" class="portfolio-link" target="_blank">
+                    <i class="bi bi-link-45deg"></i> View Portfolio
+                </a>
+            </div>
+            {% endif %}
+
+            <div class="profile-actions">
+                {% if request.user == owner %}
+                <a href="{% url 'edit_profile' %}" class="btn-action">
+                    <i class="bi bi-pencil"></i> Edit Profile
+                </a>
+                {% else %}
+                <button class="btn-action primary">
+                    <i class="bi bi-plus-lg"></i> Follow
+                </button>
+                <button class="btn-action">
+                    <i class="bi bi-chat"></i> Message
+                </button>
+                {% endif %}
+
+                <!-- Booking Button -->
+                  {% if request.user != owner %}
+                <button class="btn-booking" data-bs-toggle="modal" data-bs-target="#bookingModal">
+                    <i class="bi bi-camera2"></i> Book Photoshoot
+                </button>
+                {% endif %}
+            </div>
+        </div>
+
+  
+       
+
+        <!-- RIGHT COLUMN -->
+        <div class="profile-right-column">
+
+            <!-- STATS -->
+            <div class="profile-stats">
+                <div class="stat">
+                    <span class="stat-number">{{ posts.count }}</span>
+                    <span class="stat-label">Posts</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">0</span>
+                    <span class="stat-label">Followers</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">0</span>
+                    <span class="stat-label">Following</span>
+                </div>
+            </div>
+
+            <!-- TABS -->
+            <div class="gallery-tabs">
+                <div class="tab active" data-filter="all">
+                    <i class="bi bi-grid-3x3"></i> Posts
+                </div>
+                <div class="tab" data-filter="photo">
+                    <i class="bi bi-image"></i> Photos
+                </div>
+                <div class="tab" data-filter="video">
+                    <i class="bi bi-camera-video"></i> Videos
+                </div>
+            </div>
+
+            <!-- GALLERY SECTION -->
+            <div class="gallery-section">
+                {% if posts %}
+                <div class="gallery-grid" id="galleryGrid">
+                    {% for p in posts %}
+                    <div class="gallery-item" data-id="{{ p.id }}" 
+                         data-type="{% if p.image %}photo{% elif p.video %}video{% endif %}">
+                
+                        <!-- <a href="{% url 'post_detail' p.pk %}">
+
+
+
+
+                            {% if p.image %}
+                                <img src="{{ p.image.url }}" class="gallery-media" alt="Post image">
+                            {% elif p.video %}
+                                <video class="gallery-media" muted playsinline>
+                                    <source src="{{ p.video.url }}">
+                                </video>
+                            {% endif %}
+
+                            <div class="gallery-overlay">
+                                <div class="overlay-stat">
+                                    <i class="bi bi-heart-fill"></i>
+                                    <span>{{ p.likes_count|default:"0" }}</span>
+                                </div>
+                                <div class="overlay-stat">
+                                    <i class="bi bi-chat"></i>
+                                    <span>{{ p.comments_count|default:"0" }}</span>
+                                </div>
+                            </div>
+                        </a> -->
+                        
+          
+
+
+
+
+
+                    <a href="#" class="open-post-modal" 
+   data-id="{{ p.id }}"
+   data-type="{% if p.image %}photo{% elif p.video %}video{% endif %}" 
+   data-src="{% if p.image %}{{ p.image.url }}{% elif p.video %}{{ p.video.url }}{% endif %}" 
+   data-likes="{{ p.likes_count|default:'0' }}" 
+   data-comments="{{ p.comments_count|default:'0' }}"
+   data-type="{% if p.image %}photo{% elif p.video %}video{% endif %}"
+
+   data-uploader="{{ p.uploader.id }}">
+
+
+    {% if p.image %}
+        <img src="{{ p.image.url }}" class="gallery-media" alt="Post image">
+         
+
+    {% elif p.video %}
+        <video class="gallery-media" muted playsinline>
+            <source src="{{ p.video.url }}">
+        </video>
+    {% endif %}
+
+
+    <!-- {% for p in posts %}
+    <p>Post ID: {{ p.id }}</p>
+    <p>Image: {{ p.image }}</p>
+    {% if p.image %}
+        <img src="{{ p.image.url }}" style="width:200px;" alt="Post image">
+    {% else %}
+        <p>No image uploaded</p>
+    {% endif %}
+{% endfor %} -->
+
+
+    <div class="gallery-overlay">
+        <div class="overlay-stat">
+            <i class="bi bi-heart-fill"></i>
+        <span class="likes-count">{{ p.likes_count|default:"0" }}</span>
+        </div>
+        <div class="overlay-stat">
+            <i class="bi bi-chat"></i>
+        <span class="comments-count">{{ p.comments_count|default:"0" }}</span>
+        </div>
+    </div>
+</a>
+    
+                    </div>
+
+   
+                    {% endfor %}
+                </div>
+*
+                {% else %}
+                <div class="empty-gallery">
+                    <div class="empty-icon"><i class="bi bi-camera"></i></div>
+                    <h2 class="empty-title">No Posts Yet</h2>
+                    <p class="empty-text">When you share photos or videos, they will appear here.</p>
+
+                    {% if request.user == owner %}
+                    <a href="{% url 'post_create' %}" class="btn-upload">
+                        <i class="bi bi-plus-lg"></i> Share Your First Post
+                    </a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+<!-- POST POPUP MODAL -->
+<div id="postPopup">
+    <span id="closePostPopup">&times;</span>
+    <div class="popup-box">
+        <div class="popup-left" id="popupMedia"></div>
+        <div class="popup-right">
+            <div class="popup-header d-flex justify-content-between align-items-center mb-3">
+    <h5 class="m-0">Comments</h5>
+
+   
+    <!-- <div id="popupDeleteContainer"></div> -->
+     
+          <div class="popup-options">
+                
+    <i class="bi bi-three-dots-vertical" id="popupOptionsBtn"></i>
+     
+    <div class="popup-options-menu" id="popupOptionsMenu" style="display:none;">
+        
+         {% if request.user == owner %}
+        <button class="delete-post-btn" id="popupDeleteBtn">Delete</button>
+        {% endif %}
+        <button class="save">save</button>
+    </div>
+</div>
+
+
+</div>
+
+
+
+
+
+
+            <!-- <h5 class="mb-3">Comments</h5> -->
+            <div id="popupComments"></div>
+            <div class="popup-add-comment">
+                <input type="text" id="commentInput" class="form-control" placeholder="Add a comment...">
+                <button id="sendComment" class="btn btn-dark">Post</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+<!-- BOOKING MODAL -->
+<div class="modal fade" id="bookingModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                
+                <h5 class="modal-title">Book Photoshoot</h5>
+              
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="bookingForm">
+                    <div class="mb-3">
+                        <label class="form-label">Select Date</label>
+                        <input type="date" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Event Type</label>
+                        <select class="form-select">
+                            <option>Wedding</option>
+                            <option>Portrait</option>
+                            <option>Landscape</option>
+                            <option>Event</option>
+                            <option>Commercial</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Message</label>
+                        <textarea class="form-control" rows="3" 
+                                  placeholder="Tell us about your photography needs..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 py-2" 
+                            style="background: linear-gradient(45deg, #0095f6, #1877f2); border: none; border-radius: 8px; font-weight: 600;">
+                        Send Booking Request
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+<!-- <script>
+    const loggedInUserId = {{ request.user.id }};
+</script> -->
+
+
+
+
+
+<script>
+
+    // Enhanced Filter Logic with smooth animations
+    document.querySelectorAll(".tab").forEach(tab => {
+        tab.addEventListener("click", () => {
+            // Update active tab
+            document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+            tab.classList.add("active");
+
+            // Filter items
+            let filter = tab.dataset.filter;
+            let items = document.querySelectorAll(".gallery-item");
+            let visibleCount = 0;
+
+            items.forEach((item, index) => {
+                if (filter === "all") {
+                    item.style.opacity = "0";
+                    item.style.transform = "translateY(20px)";
+                    setTimeout(() => {
+                        item.style.display = "block";
+                        setTimeout(() => {
+                            item.style.opacity = "1";
+                            item.style.transform = "translateY(0)";
+                        }, 50 * index);
+                    }, 200);
+                    visibleCount++;
+                } else if (item.dataset.type === filter) {
+                    item.style.opacity = "0";
+                    item.style.transform = "translateY(20px)";
+                    setTimeout(() => {
+                        item.style.display = "block";
+                        setTimeout(() => {
+                            item.style.opacity = "1";
+                            item.style.transform = "translateY(0)";
+                        }, 50 * visibleCount);
+                    }, 200);
+                    visibleCount++;
+                } else {
+                    item.style.opacity = "0";
+                    item.style.transform = "translateY(20px)";
+                    setTimeout(() => {
+                        item.style.display = "none";
+                    }, 200);
+                }
+            });
+        });
+    });
+
+    // Auto-play videos on hover
+    document.querySelectorAll('.gallery-item video').forEach(video => {
+        video.addEventListener('mouseenter', () => video.play());
+        video.addEventListener('mouseleave', () => {
+            video.pause();
+            video.currentTime = 0;
+        });
+    });
+
+    // Initialize tooltips for stats
+    document.querySelectorAll('.stat').forEach(stat => {
+        stat.addEventListener('click', () => {
+            alert('This feature will be available soon!');
+        });
+    });
+
+
+
+
+
+
+
+
+
+
+
+document.querySelectorAll(".delete-post-btn").forEach(btn => {
+    btn.addEventListener("click", function(e) {
+        e.preventDefault();
+        e.stopPropagation(); // IMPORTANT — prevents opening post detail page
+
+        let postId = this.dataset.postId;
+
+        if (!confirm("Do you want to delete this post?")) return;
+
+        fetch(`/delete-post/${postId}/`, {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+            },
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === "success") {
+                this.closest(".gallery-item").remove();
+            } else {
+                alert("Delete failed");
+            }
+        });
+    });
+});
+
+
+
+
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    let activePostId = null;
+    const postPopup = document.getElementById("postPopup");
+    const popupMedia = document.getElementById("popupMedia");
+    const popupComments = document.getElementById("popupComments");
+    const commentInput = document.getElementById("commentInput");
+    const sendCommentBtn = document.getElementById("sendComment");
+    const closePopupBtn = document.getElementById("closePostPopup");
+    const popupDeleteContainer = document.getElementById("popupDeleteContainer");
+    
+document.addEventListener("click", function (event) {
+    // Clicked the three dotted button
+    const dotsBtn = event.target.closest(".post-options-btn");
+    if (dotsBtn) {
+        const container = dotsBtn.closest(".post-options");
+        const menu = container.querySelector(".post-options-menu");
+
+        // close others
+        document.querySelectorAll(".post-options-menu").forEach(m => {
+            if (m !== menu) m.style.display = "none";
+        });
+
+        // toggle this
+        menu.style.display = menu.style.display === "block" ? "none" : "block";
+
+        event.stopPropagation();
+        return;
+    }
+
+    // If click inside menu -> allowed
+    if (event.target.closest(".post-options-menu")) return;
+
+    // Click outside -> close all
+    document.querySelectorAll(".post-options-menu").forEach(menu => {
+        menu.style.display = "none";
+    });
+});
+
+
+
+    // CSRF Token helper
+    function getCSRFToken() {
+        let cookieValue = null;
+        document.cookie.split(";").forEach(cookie => {
+            cookie = cookie.trim();
+            if (cookie.startsWith("csrftoken=")) {
+                cookieValue = cookie.substring("csrftoken=".length);
+            }
+        });
+        return cookieValue;
+    }
+
+    // Open post popup
+    document.querySelectorAll(".open-post-modal").forEach(el => {
+        el.addEventListener("click", function(e) {
+            e.preventDefault();
+            activePostId = this.dataset.id;
+            const type = this.dataset.type;
+            const src = this.dataset.src;
+
+            popupMedia.innerHTML = "";
+            if (type === "photo") {
+                popupMedia.innerHTML = `<img src="${src}" class="img-fluid" style="max-height:100%;object-fit:contain;">`;
+            } else if (type === "video") {
+                popupMedia.innerHTML = `<video src="${src}" controls autoplay class="img-fluid" style="max-height:100%;"></video>`;
+            }
+
+
+
+
+            // Popup options menu (3 dots)
+const popupOptionsBtn = document.getElementById("popupOptionsBtn");
+const popupOptionsMenu = document.getElementById("popupOptionsMenu");
+
+// Toggle menu inside popup
+popupOptionsBtn.addEventListener("click", function(e) {
+    e.stopPropagation();
+    popupOptionsMenu.style.display =
+        popupOptionsMenu.style.display === "block" ? "none" : "block";
+});
+
+// Close popup menu when clicking outside
+document.addEventListener("click", function(e) {
+    if (!e.target.closest(".popup-options")) {
+        popupOptionsMenu.style.display = "none";
+    }
+});
+
+            // Inject delete button dynamically if user is owner
+            {% if request.user == owner %}
+            
+            // popupDeleteContainer.innerHTML = `
+            //     <button class="delete-post-btn" data-post-id="${activePostId}">
+            //         <i class="bi bi-trash3"></i> Delete
+            //     </button>
+            // `;
+            document.getElementById("popupDeleteBtn").dataset.postId = activePostId;
+
+            {% else %}
+            // popupDeleteContainer.innerHTML = "";
+            // {% endif %}
+
+            postPopup.style.display = "flex";
+            loadComments(activePostId);
+        });
+    });
+
+
+
+
+
+ 
+    // Close popup
+    closePopupBtn.onclick = () => postPopup.style.display = "none";
+    postPopup.onclick = (e) => { if(e.target.id === "postPopup") postPopup.style.display = "none"; };
+
+    // Delete post (event delegation)
+    document.addEventListener("click", function(e) {
+        if(e.target.closest(".delete-post-btn")) {
+            const btn = e.target.closest(".delete-post-btn");
+            const postId = btn.dataset.postId;
+
+            if(!confirm("Do you want to delete this post?")) return;
+
+            fetch(`/delete-post/${postId}/`, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": getCSRFToken(),
+                },
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.status === "success") {
+                    // Remove post from gallery
+                    const galleryItem = document.querySelector(`.gallery-item[data-id="${postId}"]`);
+                    if(galleryItem) galleryItem.remove();
+
+                    // Close popup
+                    postPopup.style.display = "none";
+                } else {
+                    alert("Delete failed");
+                }
+            })
+            .catch(err => console.error("Delete post error:", err));
+        }
+    });
+
+    // Load comments
+    function loadComments(postId) {
+        fetch(`/get-comments/${postId}/`)
+            .then(res => res.json())
+            .then(data => {
+                popupComments.innerHTML = "";
+                if (data.comments.length === 0) {
+                    popupComments.innerHTML = `<p class="text-muted">No comments yet.</p>`;
+                } else {
+                    data.comments.forEach(c => {
+                        const profileImg = c.profile_pic_url 
+                            ? `<img src="${c.profile_pic_url}" class="comment-profile-pic">`
+                            : `<img src="/static/default_profile.png" class="comment-profile-pic">`;
+
+                        const commentHtml = `
+                            <div class="comment-item">
+                                ${profileImg}
+                                <div>
+                                    <strong>${c.user}</strong>
+                                    <div class="comment-text">${c.text}</div>
+                                </div>
+                            </div>`;
+                        popupComments.insertAdjacentHTML('beforeend', commentHtml);
+                    });
+                }
+            })
+            .catch(err => console.error("Load comments error:", err));
+    }
+
+    // Post a comment
+    function postComment() {
+        const text = commentInput.value.trim();
+        if (!text || !activePostId) return;
+
+        fetch("{% url 'add_comment' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCSRFToken(),
+            },
+            body: JSON.stringify({ post_id: activePostId, comment: text })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.error) {
+                alert("Failed to post comment: " + data.error);
+                return;
+            }
+            commentInput.value = "";
+            loadComments(activePostId);
+        })
+        .catch(err => console.error("Post comment error:", err));
+    }
+
+    sendCommentBtn.addEventListener("click", postComment);
+    commentInput.addEventListener("keypress", function(e) {
+        if(e.key === "Enter") postComment();
+    });
+
+    // Like button functionality
+    document.querySelectorAll(".like-btn").forEach(btn => {
+        btn.addEventListener("click", function () {
+            const postId = this.dataset.id;
+            const formData = new FormData();
+            formData.append("post_id", postId);
+
+            fetch("{% url 'like_post' %}", {
+                method: "POST",
+                headers: { "X-CSRFToken": getCSRFToken() },
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                const likeButtons = document.querySelectorAll(`.like-btn[data-id="${postId}"]`);
+                likeButtons.forEach(b => b.innerHTML = `❤️ Like (${data.count})`);
+            })
+            .catch(err => console.error("Like error:", err));
+        });
+    });
+});
+
+
+
+
+
+
+
+
+</script>
+
+
+
+{% endblock %}
