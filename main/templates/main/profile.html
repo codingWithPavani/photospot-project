@@ -732,10 +732,6 @@
                 {% endif %}
             </div>
         </div>
-
-  
-       
-
         <!-- RIGHT COLUMN -->
         <div class="profile-right-column">
 
@@ -775,39 +771,8 @@
                     {% for p in posts %}
                     <div class="gallery-item" data-id="{{ p.id }}" 
                          data-type="{% if p.image %}photo{% elif p.video %}video{% endif %}">
-                
-                        <!-- <a href="{% url 'post_detail' p.pk %}">
-
-
-
-
-                            {% if p.image %}
-                                <img src="{{ p.image.url }}" class="gallery-media" alt="Post image">
-                            {% elif p.video %}
-                                <video class="gallery-media" muted playsinline>
-                                    <source src="{{ p.video.url }}">
-                                </video>
-                            {% endif %}
-
-                            <div class="gallery-overlay">
-                                <div class="overlay-stat">
-                                    <i class="bi bi-heart-fill"></i>
-                                    <span>{{ p.likes_count|default:"0" }}</span>
-                                </div>
-                                <div class="overlay-stat">
-                                    <i class="bi bi-chat"></i>
-                                    <span>{{ p.comments_count|default:"0" }}</span>
-                                </div>
-                            </div>
-                        </a> -->
                         
-          
-
-
-
-
-
-                    <a href="#" class="open-post-modal" 
+                              <a href="#" class="open-post-modal" 
    data-id="{{ p.id }}"
    data-type="{% if p.image %}photo{% elif p.video %}video{% endif %}" 
    data-src="{% if p.image %}{{ p.image.url }}{% elif p.video %}{{ p.video.url }}{% endif %}" 
@@ -827,19 +792,6 @@
             <source src="{{ p.video.url }}">
         </video>
     {% endif %}
-
-
-    <!-- {% for p in posts %}
-    <p>Post ID: {{ p.id }}</p>
-    <p>Image: {{ p.image }}</p>
-    {% if p.image %}
-        <img src="{{ p.image.url }}" style="width:200px;" alt="Post image">
-    {% else %}
-        <p>No image uploaded</p>
-    {% endif %}
-{% endfor %} -->
-
-
     <div class="gallery-overlay">
         <div class="overlay-stat">
             <i class="bi bi-heart-fill"></i>
@@ -857,7 +809,7 @@
    
                     {% endfor %}
                 </div>
-*
+
                 {% else %}
                 <div class="empty-gallery">
                     <div class="empty-icon"><i class="bi bi-camera"></i></div>
@@ -876,11 +828,6 @@
         </div>
     </div>
 </div>
-
-
-
-
-
 
 <!-- POST POPUP MODAL -->
 <div id="postPopup">
@@ -909,12 +856,6 @@
 
 
 </div>
-
-
-
-
-
-
             <!-- <h5 class="mb-3">Comments</h5> -->
             <div id="popupComments"></div>
             <div class="popup-add-comment">
@@ -924,16 +865,6 @@
         </div>
     </div>
 </div>
-
-
-
-
-
-
-
-
-
-
 
 <!-- BOOKING MODAL -->
 <div class="modal fade" id="bookingModal" tabindex="-1" aria-hidden="true">
@@ -975,20 +906,6 @@
         </div>
     </div>
 </div>
-
-
-
-
-
-
-
-<!-- <script>
-    const loggedInUserId = {{ request.user.id }};
-</script> -->
-
-
-
-
 
 <script>
 
@@ -1055,6 +972,266 @@
     });
 
 
+// document.addEventListener("DOMContentLoaded", function () {
+//     let activePostId = null;
+//     const postPopup = document.getElementById("postPopup");
+//     const popupMedia = document.getElementById("popupMedia");
+//     const popupComments = document.getElementById("popupComments");
+//     const commentInput = document.getElementById("commentInput");
+//     const sendCommentBtn = document.getElementById("sendComment");
+//     const closePopupBtn = document.getElementById("closePostPopup");
+//     const popupDeleteContainer = document.getElementById("popupDeleteContainer");
+    
+// document.addEventListener("click", function (event) {
+//     // Clicked the three dotted button
+//     const dotsBtn = event.target.closest(".post-options-btn");
+//     if (dotsBtn) {
+//         const container = dotsBtn.closest(".post-options");
+//         const menu = container.querySelector(".post-options-menu");
+
+//         // close others
+//         document.querySelectorAll(".post-options-menu").forEach(m => {
+//             if (m !== menu) m.style.display = "none";
+//         });
+
+//         // toggle this
+//         menu.style.display = menu.style.display === "block" ? "none" : "block";
+
+//         event.stopPropagation();
+//         return;
+//     }
+
+//     // If click inside menu -> allowed
+//     if (event.target.closest(".post-options-menu")) return;
+
+//     // Click outside -> close all
+//     document.querySelectorAll(".post-options-menu").forEach(menu => {
+//         menu.style.display = "none";
+//     });
+// });
+
+
+
+//     // CSRF Token helper
+//     function getCSRFToken() {
+//         let cookieValue = null;
+//         document.cookie.split(";").forEach(cookie => {
+//             cookie = cookie.trim();
+//             if (cookie.startsWith("csrftoken=")) {
+//                 cookieValue = cookie.substring("csrftoken=".length);
+//             }
+//         });
+//         return cookieValue;
+//     }
+
+//     // Open post popup
+//     document.querySelectorAll(".open-post-modal").forEach(el => {
+//         el.addEventListener("click", function(e) {
+//             e.preventDefault();
+//             activePostId = this.dataset.id;
+//             const type = this.dataset.type;
+//             const src = this.dataset.src;
+
+//             popupMedia.innerHTML = "";
+//             if (type === "photo") {
+//                 popupMedia.innerHTML = `<img src="${src}" class="img-fluid" style="max-height:100%;object-fit:contain;">`;
+//             } else if (type === "video") {
+//                 popupMedia.innerHTML = `<video src="${src}" controls autoplay class="img-fluid" style="max-height:100%;"></video>`;
+//             }
+
+
+
+
+//             // Popup options menu (3 dots)
+// const popupOptionsBtn = document.getElementById("popupOptionsBtn");
+// const popupOptionsMenu = document.getElementById("popupOptionsMenu");
+
+// // Toggle menu inside popup
+// popupOptionsBtn.addEventListener("click", function(e) {
+//     e.stopPropagation();
+//     popupOptionsMenu.style.display =
+//         popupOptionsMenu.style.display === "block" ? "none" : "block";
+// });
+
+// // Close popup menu when clicking outside
+// document.addEventListener("click", function(e) {
+//     if (!e.target.closest(".popup-options")) {
+//         popupOptionsMenu.style.display = "none";
+//     }
+// });
+
+//             // Inject delete button dynamically if user is owner
+//             {% if request.user == owner %}
+            
+//             // popupDeleteContainer.innerHTML = `
+//             //     <button class="delete-post-btn" data-post-id="${activePostId}">
+//             //         <i class="bi bi-trash3"></i> Delete
+//             //     </button>
+//             // `;
+//             document.getElementById("popupDeleteBtn").dataset.postId = activePostId;
+
+//             {% else %}
+//             // popupDeleteContainer.innerHTML = "";
+//             // {% endif %}
+
+//             postPopup.style.display = "flex";
+//             loadComments(activePostId);
+//         });
+//     });
+
+
+//     // Close popup
+//     closePopupBtn.onclick = () => postPopup.style.display = "none";
+//     postPopup.onclick = (e) => { if(e.target.id === "postPopup") postPopup.style.display = "none"; };
+
+//     // Delete post from popup
+
+//     const popupDeleteBtn = document.getElementById("popupDeleteBtn");
+
+// popupDeleteBtn.addEventListener("click", function () {
+//     const postId = this.dataset.postId;
+
+//     if (!confirm("Do you want to delete this post?")) return;
+
+//     fetch(`/delete-post/${postId}/`, {
+//         method: "POST",
+//         headers: {
+//             "X-CSRFToken": getCSRFToken(),
+//         },
+//     })
+//     .then(res => res.json())
+//     .then(data => {
+//         if (data.status === "success") {
+
+//             const galleryItem = document.querySelector(`.gallery-item[data-id="${postId}"]`);
+//             if (galleryItem) {
+//                 galleryItem.remove();   // 💥 disappears instantly
+//             }
+
+//             postPopup.style.display = "none"; // close modal
+//         }
+//     });
+// });
+
+
+
+
+
+
+
+//     // Delete post (event delegation)
+// //     document.addEventListener("click", function(e) {
+// //         if(e.target.closest(".delete-post-btn")) {
+// //             const btn = e.target.closest(".delete-post-btn");
+// //             const postId = btn.dataset.postId;
+
+// //             if(!confirm("Do you want to delete this post?")) return;
+
+// //             fetch(`/delete-post/${postId}/`, {
+// //                 method: "POST",
+// //                 headers: {
+// //                     "X-CSRFToken": getCSRFToken(),
+// //                 },
+// //             })
+// //             .then(res => res.json())
+// //             .then(data => {
+// //                 if(data.status === "success") {
+// //                     // Remove post from gallery
+// //                     // const galleryItem = document.querySelector(`.gallery-item[data-id="${postId}"]`);
+// // const galleryItem = document.querySelector(`.gallery-item[data-id="${String(postId)}"]`);
+
+// //                     if(galleryItem) galleryItem.remove();
+
+// //                     // Close popup
+// //                     postPopup.style.display = "none";
+// //                 } else {
+// //                     alert("Delete failed");
+// //                 }
+// //             })
+// //             .catch(err => console.error("Delete post error:", err));
+// //         }
+// //     });
+
+//     // Load comments
+//     function loadComments(postId) {
+//         fetch(`/get-comments/${postId}/`)
+//             .then(res => res.json())
+//             .then(data => {
+//                 popupComments.innerHTML = "";
+//                 if (data.comments.length === 0) {
+//                     popupComments.innerHTML = `<p class="text-muted">No comments yet.</p>`;
+//                 } else {
+//                     data.comments.forEach(c => {
+//                         const profileImg = c.profile_pic_url 
+//                             ? `<img src="${c.profile_pic_url}" class="comment-profile-pic">`
+//                             : `<img src="/static/default_profile.png" class="comment-profile-pic">`;
+
+//                         const commentHtml = `
+//                             <div class="comment-item">
+//                                 ${profileImg}
+//                                 <div>
+//                                     <strong>${c.user}</strong>
+//                                     <div class="comment-text">${c.text}</div>
+//                                 </div>
+//                             </div>`;
+//                         popupComments.insertAdjacentHTML('beforeend', commentHtml);
+//                     });
+//                 }
+//             })
+//             .catch(err => console.error("Load comments error:", err));
+//     }
+
+//     // Post a comment
+//     function postComment() {
+//         const text = commentInput.value.trim();
+//         if (!text || !activePostId) return;
+
+//         fetch("{% url 'add_comment' %}", {
+//             method: "POST",
+//             headers: {
+//                 "Content-Type": "application/json",
+//                 "X-CSRFToken": getCSRFToken(),
+//             },
+//             body: JSON.stringify({ post_id: activePostId, comment: text })
+//         })
+//         .then(res => res.json())
+//         .then(data => {
+//             if(data.error) {
+//                 alert("Failed to post comment: " + data.error);
+//                 return;
+//             }
+//             commentInput.value = "";
+//             loadComments(activePostId);
+//         })
+//         .catch(err => console.error("Post comment error:", err));
+//     }
+
+//     sendCommentBtn.addEventListener("click", postComment);
+//     commentInput.addEventListener("keypress", function(e) {
+//         if(e.key === "Enter") postComment();
+//     });
+
+//     // Like button functionality
+//     document.querySelectorAll(".like-btn").forEach(btn => {
+//         btn.addEventListener("click", function () {
+//             const postId = this.dataset.id;
+//             const formData = new FormData();
+//             formData.append("post_id", postId);
+
+//             fetch("{% url 'like_post' %}", {
+//                 method: "POST",
+//                 headers: { "X-CSRFToken": getCSRFToken() },
+//                 body: formData
+//             })
+//             .then(res => res.json())
+//             .then(data => {
+//                 const likeButtons = document.querySelectorAll(`.like-btn[data-id="${postId}"]`);
+//                 likeButtons.forEach(b => b.innerHTML = `❤️ Like (${data.count})`);
+//             })
+//             .catch(err => console.error("Like error:", err));
+//         });
+//     });
+// });
 
 
 
@@ -1064,31 +1241,6 @@
 
 
 
-document.querySelectorAll(".delete-post-btn").forEach(btn => {
-    btn.addEventListener("click", function(e) {
-        e.preventDefault();
-        e.stopPropagation(); // IMPORTANT — prevents opening post detail page
-
-        let postId = this.dataset.postId;
-
-        if (!confirm("Do you want to delete this post?")) return;
-
-        fetch(`/delete-post/${postId}/`, {
-            method: "POST",
-            headers: {
-                "X-CSRFToken": "{{ csrf_token }}",
-            },
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.status === "success") {
-                this.closest(".gallery-item").remove();
-            } else {
-                alert("Delete failed");
-            }
-        });
-    });
-});
 
 
 
@@ -1097,45 +1249,19 @@ document.querySelectorAll(".delete-post-btn").forEach(btn => {
 
 document.addEventListener("DOMContentLoaded", function () {
     let activePostId = null;
+
+    // DOM Elements
     const postPopup = document.getElementById("postPopup");
     const popupMedia = document.getElementById("popupMedia");
     const popupComments = document.getElementById("popupComments");
     const commentInput = document.getElementById("commentInput");
     const sendCommentBtn = document.getElementById("sendComment");
     const closePopupBtn = document.getElementById("closePostPopup");
-    const popupDeleteContainer = document.getElementById("popupDeleteContainer");
-    
-document.addEventListener("click", function (event) {
-    // Clicked the three dotted button
-    const dotsBtn = event.target.closest(".post-options-btn");
-    if (dotsBtn) {
-        const container = dotsBtn.closest(".post-options");
-        const menu = container.querySelector(".post-options-menu");
+    const popupDeleteBtn = document.getElementById("popupDeleteBtn");
+    const popupOptionsBtn = document.getElementById("popupOptionsBtn");
+    const popupOptionsMenu = document.getElementById("popupOptionsMenu");
 
-        // close others
-        document.querySelectorAll(".post-options-menu").forEach(m => {
-            if (m !== menu) m.style.display = "none";
-        });
-
-        // toggle this
-        menu.style.display = menu.style.display === "block" ? "none" : "block";
-
-        event.stopPropagation();
-        return;
-    }
-
-    // If click inside menu -> allowed
-    if (event.target.closest(".post-options-menu")) return;
-
-    // Click outside -> close all
-    document.querySelectorAll(".post-options-menu").forEach(menu => {
-        menu.style.display = "none";
-    });
-});
-
-
-
-    // CSRF Token helper
+    // Helper: Get CSRF token
     function getCSRFToken() {
         let cookieValue = null;
         document.cookie.split(";").forEach(cookie => {
@@ -1147,7 +1273,7 @@ document.addEventListener("click", function (event) {
         return cookieValue;
     }
 
-    // Open post popup
+    // Open Post Popup
     document.querySelectorAll(".open-post-modal").forEach(el => {
         el.addEventListener("click", function(e) {
             e.preventDefault();
@@ -1155,6 +1281,7 @@ document.addEventListener("click", function (event) {
             const type = this.dataset.type;
             const src = this.dataset.src;
 
+            // Display media
             popupMedia.innerHTML = "";
             if (type === "photo") {
                 popupMedia.innerHTML = `<img src="${src}" class="img-fluid" style="max-height:100%;object-fit:contain;">`;
@@ -1162,116 +1289,61 @@ document.addEventListener("click", function (event) {
                 popupMedia.innerHTML = `<video src="${src}" controls autoplay class="img-fluid" style="max-height:100%;"></video>`;
             }
 
-
-
-
-            // Popup options menu (3 dots)
-const popupOptionsBtn = document.getElementById("popupOptionsBtn");
-const popupOptionsMenu = document.getElementById("popupOptionsMenu");
-
-// Toggle menu inside popup
-popupOptionsBtn.addEventListener("click", function(e) {
-    e.stopPropagation();
-    popupOptionsMenu.style.display =
-        popupOptionsMenu.style.display === "block" ? "none" : "block";
-});
-
-// Close popup menu when clicking outside
-document.addEventListener("click", function(e) {
-    if (!e.target.closest(".popup-options")) {
-        popupOptionsMenu.style.display = "none";
-    }
-});
-
-            // Inject delete button dynamically if user is owner
-            {% if request.user == owner %}
-            
-            // popupDeleteContainer.innerHTML = `
-            //     <button class="delete-post-btn" data-post-id="${activePostId}">
-            //         <i class="bi bi-trash3"></i> Delete
-            //     </button>
-            // `;
-            document.getElementById("popupDeleteBtn").dataset.postId = activePostId;
-
-            {% else %}
-            // popupDeleteContainer.innerHTML = "";
-            // {% endif %}
-
+            // Show popup
             postPopup.style.display = "flex";
+
+            // Update delete button dataset
+            if (popupDeleteBtn) {
+                popupDeleteBtn.dataset.postId = activePostId;
+
+                // Remove previous listener to prevent stacking
+                popupDeleteBtn.replaceWith(popupDeleteBtn.cloneNode(true));
+                const newDeleteBtn = document.getElementById("popupDeleteBtn");
+
+                newDeleteBtn.addEventListener("click", function() {
+                    const postId = this.dataset.postId;
+                    if (!confirm("Do you want to delete this post?")) return;
+
+                    fetch(`/delete-post/${postId}/`, {
+                        method: "POST",
+                        headers: { "X-CSRFToken": getCSRFToken() },
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.status === "success") {
+                            const galleryItem = document.querySelector(`.gallery-item[data-id="${postId}"]`);
+                            if (galleryItem) galleryItem.remove(); // disappears instantly
+                            postPopup.style.display = "none";
+                        } else {
+                            alert("Delete failed");
+                        }
+                    })
+                    .catch(err => console.error(err));
+                });
+            }
+
+            // Load comments for this post
             loadComments(activePostId);
         });
     });
 
-
-
-
-
- 
     // Close popup
     closePopupBtn.onclick = () => postPopup.style.display = "none";
     postPopup.onclick = (e) => { if(e.target.id === "postPopup") postPopup.style.display = "none"; };
 
-    // Delete post (event delegation)
+    // Toggle popup options menu
+    popupOptionsBtn.addEventListener("click", function(e) {
+        e.stopPropagation();
+        popupOptionsMenu.style.display =
+            popupOptionsMenu.style.display === "block" ? "none" : "block";
+    });
     document.addEventListener("click", function(e) {
-        if(e.target.closest(".delete-post-btn")) {
-            const btn = e.target.closest(".delete-post-btn");
-            const postId = btn.dataset.postId;
-
-            if(!confirm("Do you want to delete this post?")) return;
-
-            fetch(`/delete-post/${postId}/`, {
-                method: "POST",
-                headers: {
-                    "X-CSRFToken": getCSRFToken(),
-                },
-            })
-            .then(res => res.json())
-            .then(data => {
-                if(data.status === "success") {
-                    // Remove post from gallery
-                    const galleryItem = document.querySelector(`.gallery-item[data-id="${postId}"]`);
-                    if(galleryItem) galleryItem.remove();
-
-                    // Close popup
-                    postPopup.style.display = "none";
-                } else {
-                    alert("Delete failed");
-                }
-            })
-            .catch(err => console.error("Delete post error:", err));
+        if (!e.target.closest(".popup-options")) {
+            popupOptionsMenu.style.display = "none";
         }
     });
 
-    // Load comments
-    function loadComments(postId) {
-        fetch(`/get-comments/${postId}/`)
-            .then(res => res.json())
-            .then(data => {
-                popupComments.innerHTML = "";
-                if (data.comments.length === 0) {
-                    popupComments.innerHTML = `<p class="text-muted">No comments yet.</p>`;
-                } else {
-                    data.comments.forEach(c => {
-                        const profileImg = c.profile_pic_url 
-                            ? `<img src="${c.profile_pic_url}" class="comment-profile-pic">`
-                            : `<img src="/static/default_profile.png" class="comment-profile-pic">`;
-
-                        const commentHtml = `
-                            <div class="comment-item">
-                                ${profileImg}
-                                <div>
-                                    <strong>${c.user}</strong>
-                                    <div class="comment-text">${c.text}</div>
-                                </div>
-                            </div>`;
-                        popupComments.insertAdjacentHTML('beforeend', commentHtml);
-                    });
-                }
-            })
-            .catch(err => console.error("Load comments error:", err));
-    }
-
-    // Post a comment
+    // Post comment
     function postComment() {
         const text = commentInput.value.trim();
         if (!text || !activePostId) return;
@@ -1286,7 +1358,7 @@ document.addEventListener("click", function(e) {
         })
         .then(res => res.json())
         .then(data => {
-            if(data.error) {
+            if (data.error) {
                 alert("Failed to post comment: " + data.error);
                 return;
             }
@@ -1301,7 +1373,36 @@ document.addEventListener("click", function(e) {
         if(e.key === "Enter") postComment();
     });
 
-    // Like button functionality
+    // Load comments
+    function loadComments(postId) {
+        fetch(`/get-comments/${postId}/`)
+        .then(res => res.json())
+        .then(data => {
+            popupComments.innerHTML = "";
+            if (data.comments.length === 0) {
+                popupComments.innerHTML = `<p class="text-muted">No comments yet.</p>`;
+            } else {
+                data.comments.forEach(c => {
+                    const profileImg = c.profile_pic_url 
+                        ? `<img src="${c.profile_pic_url}" class="comment-profile-pic">`
+                        : `<img src="/static/default_profile.png" class="comment-profile-pic">`;
+
+                    const commentHtml = `
+                        <div class="comment-item">
+                            ${profileImg}
+                            <div>
+                                <strong>${c.user}</strong>
+                                <div class="comment-text">${c.text}</div>
+                            </div>
+                        </div>`;
+                    popupComments.insertAdjacentHTML('beforeend', commentHtml);
+                });
+            }
+        })
+        .catch(err => console.error("Load comments error:", err));
+    }
+
+    // Like button
     document.querySelectorAll(".like-btn").forEach(btn => {
         btn.addEventListener("click", function () {
             const postId = this.dataset.id;
@@ -1315,21 +1416,34 @@ document.addEventListener("click", function(e) {
             })
             .then(res => res.json())
             .then(data => {
-                const likeButtons = document.querySelectorAll(`.like-btn[data-id="${postId}"]`);
-                likeButtons.forEach(b => b.innerHTML = `❤️ Like (${data.count})`);
+                document.querySelectorAll(`.like-btn[data-id="${postId}"]`).forEach(b => {
+                    b.innerHTML = `❤️ Like (${data.count})`;
+                });
             })
             .catch(err => console.error("Like error:", err));
         });
     });
+
+    // Post options menu for gallery items (3 dots outside popup)
+    document.addEventListener("click", function (event) {
+        const dotsBtn = event.target.closest(".post-options-btn");
+        if (dotsBtn) {
+            const container = dotsBtn.closest(".post-options");
+            const menu = container.querySelector(".post-options-menu");
+
+            document.querySelectorAll(".post-options-menu").forEach(m => {
+                if (m !== menu) m.style.display = "none";
+            });
+
+            menu.style.display = menu.style.display === "block" ? "none" : "block";
+            event.stopPropagation();
+            return;
+        }
+        if (!event.target.closest(".post-options-menu")) {
+            document.querySelectorAll(".post-options-menu").forEach(menu => menu.style.display = "none");
+        }
+    });
 });
-
-
-
-
-
-
-
-
 </script>
 
 

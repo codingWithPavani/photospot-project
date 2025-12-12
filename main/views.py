@@ -585,7 +585,8 @@ def post_create(request):
             p.uploader = request.user
             p.save()
             messages.success(request, 'Post uploaded successfully.')
-            return redirect('post_detail', pk=p.pk)
+            # return redirect('post_detail', pk=p.pk)
+            return redirect('profile', username=request.user.username)
         else:
             messages.error(request, 'Please correct the errors below.')
     else:
