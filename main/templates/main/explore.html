@@ -570,7 +570,7 @@
             {% elif p.video and p.video.name %}
                 <video class="card-img-top popup-trigger" muted
                        data-id="{{ p.id }}" data-type="video" data-src="{{ p.video.url }}">
-                    <source src="{{ t.video.url }}">
+                    <source src="{{ p.video.url }}">
                 </video>
             {% endif %}
 
