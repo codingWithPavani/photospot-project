@@ -1241,12 +1241,6 @@
 
 
 
-
-
-
-
-
-
 document.addEventListener("DOMContentLoaded", function () {
     let activePostId = null;
 
@@ -1284,7 +1278,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // Display media
             popupMedia.innerHTML = "";
             if (type === "photo") {
-                popupMedia.innerHTML = `<img src="${src}" class="img-fluid" style="max-height:100%;object-fit:contain;">`;
+                popupMedia.innerHTML =` <img src="${src}" class="img-fluid" style="max-height:100%;object-fit:contain;">`;
             } else if (type === "video") {
                 popupMedia.innerHTML = `<video src="${src}" controls autoplay class="img-fluid" style="max-height:100%;"></video>`;
             }
@@ -1417,7 +1411,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(res => res.json())
             .then(data => {
                 document.querySelectorAll(`.like-btn[data-id="${postId}"]`).forEach(b => {
-                    b.innerHTML = `❤️ Like (${data.count})`;
+                    b.innerHTML = `❤ Like (${data.count})`;
                 });
             })
             .catch(err => console.error("Like error:", err));
@@ -1444,6 +1438,12 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
+
+
+
+
+
+
 </script>
 
 
