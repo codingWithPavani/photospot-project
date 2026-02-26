@@ -878,7 +878,6 @@
             </div>
 
             <div class="modal-body">
-                <!-- <form method="POST" action="{% url 'book_photoshoot' profile.id %}"> -->
 {% if profile %}
 <form method="POST" action="{% url 'book_photoshoot' profile.id %}">
 {% endif %}                    {% csrf_token %}
