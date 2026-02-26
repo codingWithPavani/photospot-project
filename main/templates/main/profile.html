@@ -879,8 +879,9 @@
 
             <div class="modal-body">
                 <!-- <form method="POST" action="{% url 'book_photoshoot' profile.id %}"> -->
-                    <form method="POST" action="{% url 'book_photoshoot' owner.profile.id %}">
-                    {% csrf_token %}
+{% if profile %}
+<form method="POST" action="{% url 'book_photoshoot' profile.id %}">
+{% endif %}                    {% csrf_token %}
 
                     <div class="mb-3">
                         <label class="form-label">Select Date</label>
