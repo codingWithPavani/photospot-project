@@ -867,7 +867,7 @@
 </div>
 
 <!-- BOOKING MODAL -->
-<div class="modal fade" id="bookingModal" tabindex="-1" aria-hidden="true">
+<!-- <div class="modal fade" id="bookingModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -905,7 +905,60 @@
             </div>
         </div>
     </div>
+</div> -->
+
+
+
+
+
+<div class="modal fade" id="bookingModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Book Photoshoot</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <form method="POST" action="{% url 'book_photoshoot' profile.id %}">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label class="form-label">Select Date</label>
+                        <input type="date" name="date" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Event Type</label>
+                        <select name="event_type" class="form-select" required>
+                            <option value="Wedding">Wedding</option>
+                            <option value="Portrait">Portrait</option>
+                            <option value="Landscape">Landscape</option>
+                            <option value="Event">Event</option>
+                            <option value="Commercial">Commercial</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Message</label>
+                        <textarea name="message" class="form-control" rows="3"
+                                  placeholder="Tell us about your photography needs..."
+                                  required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 py-2">
+                        Send Booking Request
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </div>
 </div>
+
+
+
 
 <script>
 

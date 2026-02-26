@@ -443,6 +443,41 @@ from django.contrib import messages
 from django.conf import settings
 from .models import PhotographerProfile  # Assuming your profile model is named Profile
 
+
+# @login_required
+# def book_photoshoot(request, profile_id):
+#     profile = get_object_or_404(PhotographerProfile, id=profile_id)
+
+#     if request.method == 'POST':
+#         date = request.POST.get('date')
+#         event_type = request.POST.get('event_type')
+#         message_text = request.POST.get('message')
+
+#         # Compose email
+#         subject = f"New Photoshoot Booking from {request.user.username}"
+#         message_body = f"""
+#         You have received a new booking request:
+
+#         Client: {request.user.username}
+#         Email: {request.user.email}
+#         Date: {date}
+#         Event Type: {event_type}
+#         Message: {message_text}
+#         """
+
+#         recipient_list = [profile.user.email]  # Assuming profile has OneToOneField to User
+#         send_mail(subject, message_body, settings.DEFAULT_FROM_EMAIL, recipient_list)
+
+
+
+from django.contrib.auth.decorators import login_required
+from django.core.mail import send_mail
+from django.conf import settings
+from django.contrib import messages
+from django.shortcuts import get_object_or_404, redirect
+from .models import PhotographerProfile
+
+@login_required
 def book_photoshoot(request, profile_id):
     profile = get_object_or_404(PhotographerProfile, id=profile_id)
 
@@ -451,20 +486,47 @@ def book_photoshoot(request, profile_id):
         event_type = request.POST.get('event_type')
         message_text = request.POST.get('message')
 
-        # Compose email
-        subject = f"New Photoshoot Booking from {request.user.username}"
-        message_body = f"""
-        You have received a new booking request:
+        if not date or not event_type or not message_text:
+            messages.error(request, "All fields are required.")
+            return redirect('profile', username=profile.user.username)
 
-        Client: {request.user.username}
-        Email: {request.user.email}
-        Date: {date}
-        Event Type: {event_type}
-        Message: {message_text}
+        if not profile.user.email:
+            messages.error(request, "Photographer email not available.")
+            return redirect('profile', username=profile.user.username)
+
+        sender_email = request.user.email or settings.EMAIL_HOST_USER
+
+        subject = f"New Photoshoot Booking from {request.user.username}"
+
+        message_body = f"""
+New Photoshoot Booking Request
+
+Client Name: {request.user.username}
+Client Email: {sender_email}
+
+Event Date: {date}
+Event Type: {event_type}
+
+Message:
+{message_text}
         """
 
-        recipient_list = [profile.user.email]  # Assuming profile has OneToOneField to User
-        send_mail(subject, message_body, settings.DEFAULT_FROM_EMAIL, recipient_list)
+        send_mail(
+            subject,
+            message_body,
+            settings.EMAIL_HOST_USER,
+            [profile.user.email],
+            fail_silently=False
+        )
+
+        messages.success(request, "Booking request sent successfully!")
+        return redirect('profile', username=profile.user.username)
+
+    return redirect('profile', username=profile.user.username)
+
+
+
+
         
 
         # main/views.py
@@ -1035,16 +1097,14 @@ from .models import PhotographerProfile  # Assuming your profile model is named 
 
 
 
-
-
-
 from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib import messages
-from django.shortcuts import get_object_or_404, redirect
-from .models import PhotographerProfile
+from django.shortcuts import redirect, get_object_or_404
 
+@login_required
 def book_photoshoot(request, profile_id):
+    print("BOOK PHOTOSHOOT VIEW CALLED")
     profile = get_object_or_404(PhotographerProfile, id=profile_id)
 
     if request.method == 'POST':
@@ -1052,38 +1112,37 @@ def book_photoshoot(request, profile_id):
         event_type = request.POST.get('event_type')
         message_text = request.POST.get('message')
 
-        # fallback if user email is empty
-        sender_email = request.user.email or settings.EMAIL_HOST_USER
-
-        subject = f"New Photoshoot Booking from {request.user.username}"
+        subject = "New Photoshoot Booking Request"
 
         message_body = f"""
-        You have received a new booking request:
+New booking request received!
 
-        Client: {request.user.username}
-        Email: {sender_email}
-        Date: {date}
-        Event Type: {event_type}
+Client Username: {request.user.username}
+Client Email: {request.user.email}
 
-        Message:
-        {message_text}
-        """
+Photographer: {profile.user.username}
+Date: {date}
+Event Type: {event_type}
 
-        recipient_list = [profile.user.email]
+Message:
+{message_text}
+"""
 
-        # ALWAYS send from your Gmail
         send_mail(
             subject,
             message_body,
-            settings.EMAIL_HOST_USER,   # FIXED
-            recipient_list,
+            settings.DEFAULT_FROM_EMAIL,      # FROM
+            [settings.EMAIL_HOST_USER],      # TO (your email)
             fail_silently=False
         )
 
-        messages.success(request, "Your booking request has been sent successfully!")
+        messages.success(request, "Booking request sent successfully!")
         return redirect('profile', username=profile.user.username)
 
     return redirect('profile', username=profile.user.username)
+
+
+
 
 
 

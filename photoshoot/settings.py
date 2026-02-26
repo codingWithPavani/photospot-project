@@ -88,9 +88,13 @@ WSGI_APPLICATION = 'photoshoot.wsgi.application'
 import dj_database_url
 import os
 
+
+
 DATABASES = {
-    'default': dj_database_url.parse(os.environ.get("DATABASE_URL"))
+    'default': dj_database_url.parse(os.environ.get("postgresql://photospot_db_user:3j9osFDqzg7FqFlD6qMsrHozZQvJRuNV@dpg-d4tqami4d50c73b3lafg-a/photospot_db"
+    , default="sqlite:///db.sqlite3"))
 }
+
 
 ALLOWED_HOSTS = ['*']
 
@@ -156,6 +160,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False 
 EMAIL_HOST_USER = 'abothulapavani16@gmail.com'
 EMAIL_HOST_PASSWORD = 'iqoj ypdl udmg wvxg'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

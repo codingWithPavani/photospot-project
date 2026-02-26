@@ -549,7 +549,9 @@
                             data-src="{% if t.image %}{{ t.image.url }}{% elif t.video and t.video.name %}{{ t.video.url }}{% else %}#{% endif %}">
                         💬 Comments ({{ t.comment_count }})
                     </button>
+      
                 </div>
+        
             </div>
         </div>
     </div>
@@ -587,8 +589,14 @@
                         💬 Comments ({{ p.comment_count }})
                     </button>
                 </div>
-                <p class="text-muted mt-2">
-                    By {{ p.uploader.username }} <br>
+               <p class="text-muted mt-2">
+                    <!-- By {{ p.uploader.username }} <br> -->
+       By <a href="{% url 'profile' p.uploader.username %}" class="text-decoration-none fw-bold" style="color: #090909;">
+    {{ p.uploader.username }}
+</a>
+
+
+                     
                     {{ p.location.name }}
                 </p>
             </div>
