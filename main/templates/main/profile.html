@@ -738,7 +738,7 @@
             <!-- STATS -->
             <div class="profile-stats">
                 <div class="stat">
-                    <span class="stat-number">{{ posts.count }}</span>
+                    <span class="stat-number" id="postCount">{{ posts.count }}</span>
                     <span class="stat-label">Posts</span>
                 </div>
                 <div class="stat">
@@ -803,6 +803,8 @@
         </div>
     </div>
 </a>
+
+
     
                     </div>
 
@@ -865,51 +867,6 @@
         </div>
     </div>
 </div>
-
-<!-- BOOKING MODAL -->
-<!-- <div class="modal fade" id="bookingModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                
-                <h5 class="modal-title">Book Photoshoot</h5>
-              
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="bookingForm">
-                    <div class="mb-3">
-                        <label class="form-label">Select Date</label>
-                        <input type="date" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Event Type</label>
-                        <select class="form-select">
-                            <option>Wedding</option>
-                            <option>Portrait</option>
-                            <option>Landscape</option>
-                            <option>Event</option>
-                            <option>Commercial</option>
-                        </select>
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label">Message</label>
-                        <textarea class="form-control" rows="3" 
-                                  placeholder="Tell us about your photography needs..."></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100 py-2" 
-                            style="background: linear-gradient(45deg, #0095f6, #1877f2); border: none; border-radius: 8px; font-weight: 600;">
-                        Send Booking Request
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div> -->
-
-
-
-
 
 <div class="modal fade" id="bookingModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -1025,274 +982,6 @@
     });
 
 
-// document.addEventListener("DOMContentLoaded", function () {
-//     let activePostId = null;
-//     const postPopup = document.getElementById("postPopup");
-//     const popupMedia = document.getElementById("popupMedia");
-//     const popupComments = document.getElementById("popupComments");
-//     const commentInput = document.getElementById("commentInput");
-//     const sendCommentBtn = document.getElementById("sendComment");
-//     const closePopupBtn = document.getElementById("closePostPopup");
-//     const popupDeleteContainer = document.getElementById("popupDeleteContainer");
-    
-// document.addEventListener("click", function (event) {
-//     // Clicked the three dotted button
-//     const dotsBtn = event.target.closest(".post-options-btn");
-//     if (dotsBtn) {
-//         const container = dotsBtn.closest(".post-options");
-//         const menu = container.querySelector(".post-options-menu");
-
-//         // close others
-//         document.querySelectorAll(".post-options-menu").forEach(m => {
-//             if (m !== menu) m.style.display = "none";
-//         });
-
-//         // toggle this
-//         menu.style.display = menu.style.display === "block" ? "none" : "block";
-
-//         event.stopPropagation();
-//         return;
-//     }
-
-//     // If click inside menu -> allowed
-//     if (event.target.closest(".post-options-menu")) return;
-
-//     // Click outside -> close all
-//     document.querySelectorAll(".post-options-menu").forEach(menu => {
-//         menu.style.display = "none";
-//     });
-// });
-
-
-
-//     // CSRF Token helper
-//     function getCSRFToken() {
-//         let cookieValue = null;
-//         document.cookie.split(";").forEach(cookie => {
-//             cookie = cookie.trim();
-//             if (cookie.startsWith("csrftoken=")) {
-//                 cookieValue = cookie.substring("csrftoken=".length);
-//             }
-//         });
-//         return cookieValue;
-//     }
-
-//     // Open post popup
-//     document.querySelectorAll(".open-post-modal").forEach(el => {
-//         el.addEventListener("click", function(e) {
-//             e.preventDefault();
-//             activePostId = this.dataset.id;
-//             const type = this.dataset.type;
-//             const src = this.dataset.src;
-
-//             popupMedia.innerHTML = "";
-//             if (type === "photo") {
-//                 popupMedia.innerHTML = `<img src="${src}" class="img-fluid" style="max-height:100%;object-fit:contain;">`;
-//             } else if (type === "video") {
-//                 popupMedia.innerHTML = `<video src="${src}" controls autoplay class="img-fluid" style="max-height:100%;"></video>`;
-//             }
-
-
-
-
-//             // Popup options menu (3 dots)
-// const popupOptionsBtn = document.getElementById("popupOptionsBtn");
-// const popupOptionsMenu = document.getElementById("popupOptionsMenu");
-
-// // Toggle menu inside popup
-// popupOptionsBtn.addEventListener("click", function(e) {
-//     e.stopPropagation();
-//     popupOptionsMenu.style.display =
-//         popupOptionsMenu.style.display === "block" ? "none" : "block";
-// });
-
-// // Close popup menu when clicking outside
-// document.addEventListener("click", function(e) {
-//     if (!e.target.closest(".popup-options")) {
-//         popupOptionsMenu.style.display = "none";
-//     }
-// });
-
-//             // Inject delete button dynamically if user is owner
-//             {% if request.user == owner %}
-            
-//             // popupDeleteContainer.innerHTML = `
-//             //     <button class="delete-post-btn" data-post-id="${activePostId}">
-//             //         <i class="bi bi-trash3"></i> Delete
-//             //     </button>
-//             // `;
-//             document.getElementById("popupDeleteBtn").dataset.postId = activePostId;
-
-//             {% else %}
-//             // popupDeleteContainer.innerHTML = "";
-//             // {% endif %}
-
-//             postPopup.style.display = "flex";
-//             loadComments(activePostId);
-//         });
-//     });
-
-
-//     // Close popup
-//     closePopupBtn.onclick = () => postPopup.style.display = "none";
-//     postPopup.onclick = (e) => { if(e.target.id === "postPopup") postPopup.style.display = "none"; };
-
-//     // Delete post from popup
-
-//     const popupDeleteBtn = document.getElementById("popupDeleteBtn");
-
-// popupDeleteBtn.addEventListener("click", function () {
-//     const postId = this.dataset.postId;
-
-//     if (!confirm("Do you want to delete this post?")) return;
-
-//     fetch(`/delete-post/${postId}/`, {
-//         method: "POST",
-//         headers: {
-//             "X-CSRFToken": getCSRFToken(),
-//         },
-//     })
-//     .then(res => res.json())
-//     .then(data => {
-//         if (data.status === "success") {
-
-//             const galleryItem = document.querySelector(`.gallery-item[data-id="${postId}"]`);
-//             if (galleryItem) {
-//                 galleryItem.remove();   // 💥 disappears instantly
-//             }
-
-//             postPopup.style.display = "none"; // close modal
-//         }
-//     });
-// });
-
-
-
-
-
-
-
-//     // Delete post (event delegation)
-// //     document.addEventListener("click", function(e) {
-// //         if(e.target.closest(".delete-post-btn")) {
-// //             const btn = e.target.closest(".delete-post-btn");
-// //             const postId = btn.dataset.postId;
-
-// //             if(!confirm("Do you want to delete this post?")) return;
-
-// //             fetch(`/delete-post/${postId}/`, {
-// //                 method: "POST",
-// //                 headers: {
-// //                     "X-CSRFToken": getCSRFToken(),
-// //                 },
-// //             })
-// //             .then(res => res.json())
-// //             .then(data => {
-// //                 if(data.status === "success") {
-// //                     // Remove post from gallery
-// //                     // const galleryItem = document.querySelector(`.gallery-item[data-id="${postId}"]`);
-// // const galleryItem = document.querySelector(`.gallery-item[data-id="${String(postId)}"]`);
-
-// //                     if(galleryItem) galleryItem.remove();
-
-// //                     // Close popup
-// //                     postPopup.style.display = "none";
-// //                 } else {
-// //                     alert("Delete failed");
-// //                 }
-// //             })
-// //             .catch(err => console.error("Delete post error:", err));
-// //         }
-// //     });
-
-//     // Load comments
-//     function loadComments(postId) {
-//         fetch(`/get-comments/${postId}/`)
-//             .then(res => res.json())
-//             .then(data => {
-//                 popupComments.innerHTML = "";
-//                 if (data.comments.length === 0) {
-//                     popupComments.innerHTML = `<p class="text-muted">No comments yet.</p>`;
-//                 } else {
-//                     data.comments.forEach(c => {
-//                         const profileImg = c.profile_pic_url 
-//                             ? `<img src="${c.profile_pic_url}" class="comment-profile-pic">`
-//                             : `<img src="/static/default_profile.png" class="comment-profile-pic">`;
-
-//                         const commentHtml = `
-//                             <div class="comment-item">
-//                                 ${profileImg}
-//                                 <div>
-//                                     <strong>${c.user}</strong>
-//                                     <div class="comment-text">${c.text}</div>
-//                                 </div>
-//                             </div>`;
-//                         popupComments.insertAdjacentHTML('beforeend', commentHtml);
-//                     });
-//                 }
-//             })
-//             .catch(err => console.error("Load comments error:", err));
-//     }
-
-//     // Post a comment
-//     function postComment() {
-//         const text = commentInput.value.trim();
-//         if (!text || !activePostId) return;
-
-//         fetch("{% url 'add_comment' %}", {
-//             method: "POST",
-//             headers: {
-//                 "Content-Type": "application/json",
-//                 "X-CSRFToken": getCSRFToken(),
-//             },
-//             body: JSON.stringify({ post_id: activePostId, comment: text })
-//         })
-//         .then(res => res.json())
-//         .then(data => {
-//             if(data.error) {
-//                 alert("Failed to post comment: " + data.error);
-//                 return;
-//             }
-//             commentInput.value = "";
-//             loadComments(activePostId);
-//         })
-//         .catch(err => console.error("Post comment error:", err));
-//     }
-
-//     sendCommentBtn.addEventListener("click", postComment);
-//     commentInput.addEventListener("keypress", function(e) {
-//         if(e.key === "Enter") postComment();
-//     });
-
-//     // Like button functionality
-//     document.querySelectorAll(".like-btn").forEach(btn => {
-//         btn.addEventListener("click", function () {
-//             const postId = this.dataset.id;
-//             const formData = new FormData();
-//             formData.append("post_id", postId);
-
-//             fetch("{% url 'like_post' %}", {
-//                 method: "POST",
-//                 headers: { "X-CSRFToken": getCSRFToken() },
-//                 body: formData
-//             })
-//             .then(res => res.json())
-//             .then(data => {
-//                 const likeButtons = document.querySelectorAll(`.like-btn[data-id="${postId}"]`);
-//                 likeButtons.forEach(b => b.innerHTML = `❤️ Like (${data.count})`);
-//             })
-//             .catch(err => console.error("Like error:", err));
-//         });
-//     });
-// });
-
-
-
-
-
-
-
-
 
 document.addEventListener("DOMContentLoaded", function () {
     let activePostId = null;
@@ -1339,35 +1028,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // Show popup
             postPopup.style.display = "flex";
 
-            // Update delete button dataset
-            if (popupDeleteBtn) {
-                popupDeleteBtn.dataset.postId = activePostId;
-
-                // Remove previous listener to prevent stacking
-                popupDeleteBtn.replaceWith(popupDeleteBtn.cloneNode(true));
-                const newDeleteBtn = document.getElementById("popupDeleteBtn");
-
-                newDeleteBtn.addEventListener("click", function() {
-                    const postId = this.dataset.postId;
-                    if (!confirm("Do you want to delete this post?")) return;
-
-                    fetch(`/delete-post/${postId}/`, {
-                        method: "POST",
-                        headers: { "X-CSRFToken": getCSRFToken() },
-                    })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.status === "success") {
-                            const galleryItem = document.querySelector(`.gallery-item[data-id="${postId}"]`);
-                            if (galleryItem) galleryItem.remove(); // disappears instantly
-                            postPopup.style.display = "none";
-                        } else {
-                            alert("Delete failed");
-                        }
-                    })
-                    .catch(err => console.error(err));
-                });
-            }
+        
 
             // Load comments for this post
             loadComments(activePostId);
@@ -1491,14 +1152,83 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
-
-
-
-
-
-
 </script>
 
+
+<script>
+// Delete post logic
+let activePostId = null;
+
+// When opening popup
+document.querySelectorAll(".open-post-modal").forEach(item => {
+    item.addEventListener("click", function () {
+        activePostId = this.dataset.id;
+    });
+});
+
+
+// Delete button click
+document.getElementById("popupDeleteBtn").addEventListener("click", function () {
+
+    if (!activePostId) return;
+
+    if (!confirm("Are you sure you want to delete this post?")) return;
+
+    fetch(`/delete-post/${activePostId}/`, {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": getCookie("csrftoken"),
+            "Content-Type": "application/json"
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+
+
+
+
+        if (data.success) {
+
+    // Remove post from gallery
+    const postItem = document.querySelector(`.gallery-item[data-id="${activePostId}"]`);
+    if (postItem) postItem.remove();
+
+    // UPDATE POST COUNT
+    const postCountEl = document.getElementById("postCount");
+    if (postCountEl) {
+        let count = parseInt(postCountEl.innerText);
+        postCountEl.innerText = count - 1;
+    }
+
+    // Close popup
+    postPopup.style.display = "none";
+    popupOptionsMenu.style.display = "none";
+} else {
+    alert("Delete failed: " + (data.error || "Unknown error"));     
+}
+    });
+
+});
+
+
+// CSRF TOKEN FUNCTION
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+        const cookies = document.cookie.split(";");
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+
+            if (cookie.substring(0, name.length + 1) === (name + "=")) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+</script>
 
 
 {% endblock %}

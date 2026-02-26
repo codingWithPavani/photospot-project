@@ -1172,18 +1172,37 @@ Message:
 
 
 
-from django.shortcuts import get_object_or_404, redirect
+# from django.shortcuts import get_object_or_404, redirect
+# from django.contrib.auth.decorators import login_required
+# from .models import Post
+# from django.http import JsonResponse
+
+# @login_required
+# def delete_post(request, pk):
+#     post = get_object_or_404(Post, id=pk)
+    
+#     # Check uploader instead of user
+#     if post.uploader != request.user:
+#         return redirect('profile', username=request.user.username)
+    
+#     post.delete()
+#     return redirect('profile', username=request.user.username)
+
+
+
+
+from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Post
+from django.http import JsonResponse
 
 @login_required
 def delete_post(request, pk):
     post = get_object_or_404(Post, id=pk)
-    
-    # Check uploader instead of user
-    if post.uploader != request.user:
-        return redirect('profile', username=request.user.username)
-    
-    post.delete()
-    return redirect('profile', username=request.user.username)
 
+    if post.uploader != request.user:
+        return JsonResponse({"success": False, "error": "Permission denied"})
+
+    post.delete()
+
+    return JsonResponse({"success": True})
